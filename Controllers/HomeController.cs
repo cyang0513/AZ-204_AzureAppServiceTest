@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Html;
+using Microsoft.Extensions.Configuration;
 
 namespace AzureAppServiceTest.Controllers
 {
@@ -20,6 +21,13 @@ namespace AzureAppServiceTest.Controllers
       public HomeController(ILogger<HomeController> logger)
       {
          _logger = logger;
+      }
+
+      private readonly IConfiguration Config;
+
+      public HomeController(IConfiguration config)
+      {
+         Config = config;
       }
 
       //MVC default view template is the same as action method, Index
@@ -35,8 +43,8 @@ namespace AzureAppServiceTest.Controllers
          ViewData["Message"] = sb.ToString();
          ViewData["Time"] = DateTime.Now.ToLongTimeString();
 
-         ViewData["ConnStr"] = ConfigurationManager.ConnectionStrings["TestConn"];
-         ViewData["AppTag"] = ConfigurationManager.AppSettings["AppTag"];
+         ViewData["ConnStr"] = Config.GetConnectionString("TestConn");
+         ViewData["AppTag"] = Config.GetValue<string>("AppTag");
 
          return View();
       }
