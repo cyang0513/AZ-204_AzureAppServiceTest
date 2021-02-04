@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -33,6 +34,9 @@ namespace AzureAppServiceTest.Controllers
 
          ViewData["Message"] = sb.ToString();
          ViewData["Time"] = DateTime.Now.ToLongTimeString();
+
+         ViewData["ConnStr"] = ConfigurationManager.ConnectionStrings["TestConn"];
+         ViewData["AppTag"] = ConfigurationManager.AppSettings["AppTag"];
 
          return View();
       }
