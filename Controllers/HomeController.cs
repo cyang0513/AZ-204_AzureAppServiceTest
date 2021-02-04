@@ -18,16 +18,12 @@ namespace AzureAppServiceTest.Controllers
    {
       private readonly ILogger<HomeController> _logger;
 
-      public HomeController(ILogger<HomeController> logger)
-      {
-         _logger = logger;
-      }
-
       private readonly IConfiguration Config;
 
-      public HomeController(IConfiguration config)
+      public HomeController(IConfiguration config, ILogger<HomeController> logger)
       {
          Config = config;
+         _logger = logger;
       }
 
       //MVC default view template is the same as action method, Index
