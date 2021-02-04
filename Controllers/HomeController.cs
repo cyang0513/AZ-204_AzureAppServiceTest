@@ -43,15 +43,10 @@ namespace AzureAppServiceTest.Controllers
          return View();
       }
 
-      public IEnumerable<string> Test(string msg)
+      public string Add(int aa, int bb)
       {
-         var res = new List<string>()
-                   {
-                      msg,
-                      "AAA",
-                      "BBB"
-                   };
-         return res;
+         
+         return (aa + bb).ToString();
       }
 
       [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
