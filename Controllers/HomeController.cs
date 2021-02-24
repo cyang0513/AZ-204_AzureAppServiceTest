@@ -20,10 +20,13 @@ namespace AzureAppServiceTest.Controllers
 
       private readonly IConfiguration Config;
 
+      IConfiguration m_AzureAppConfig;
+
       public HomeController(IConfiguration config, ILogger<HomeController> logger)
       {
          Config = config;
          _logger = logger;
+         m_AzureAppConfig = new ConfigurationBuilder().AddAzureAppConfiguration("Endpoint=https://chyaappconfig.azconfig.io;Id=Omkf-l8-s0:nWXPPy9HryGyrY6W7OEM;Secret=5N7bWSBymnKq5Q67iRqGZ5Kp2it7NLx/wW5ErUDW/Qs=").Build();
       }
 
       //MVC default view template is the same as action method, Index
@@ -41,6 +44,7 @@ namespace AzureAppServiceTest.Controllers
 
          ViewData["ConnStr"] = Config.GetConnectionString("TestConn");
          ViewData["AppTag"] = Config.GetValue<string>("AppTag");
+         ViewData["AzureAppConfig"] = m_AzureAppConfig.GetSection("CHYA:WebApp:Msg").Value;
 
          return View();
       }
