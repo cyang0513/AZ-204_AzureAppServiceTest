@@ -29,12 +29,24 @@ namespace AzureAppServiceTest.Controllers
          Config = config;
          _logger = logger;
 
+         var appTag = Config.GetValue<string>("AppTag");
+
+         var labelFilter = appTag.Contains("Dev") ? "Dev" : "Prod";
+
          var azureAppConfig = Config.GetConnectionString("AppConfig");
          if (azureAppConfig != null)
          {
-            m_AzureAppConfig = new ConfigurationBuilder().AddAzureAppConfiguration(azureAppConfig).Build();
+            m_AzureAppConfig = new ConfigurationBuilder().AddAzureAppConfiguration(x =>
+                                                                                   {
+                                                                                      x.Connect(azureAppConfig);
+                                                                                      x.Select("*", labelFilter);
+                                                                                      x.Select("*", "\0");
+                                                                                   })
+                                                         .Build();
             m_HasAppConfig = true;
          }
+
+
 
       }
 
@@ -58,6 +70,7 @@ namespace AzureAppServiceTest.Controllers
          {
             ViewData["AzureAppConfig"] = m_AzureAppConfig.GetSection("CHYA:WebApp:Msg").Value;
             ViewData["AzureAppConfigConnDev"] = m_AzureAppConfig.GetSection("CHYA:WebApp:Connection").Value;
+            ViewData["AzureAppConfigLabel"] = m_AzureAppConfig.GetSection("CHYA:WebApp:Label").Value;
          }
 
          return View();
