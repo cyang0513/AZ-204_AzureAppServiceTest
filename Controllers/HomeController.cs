@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using Microsoft.FeatureManagement;
+using Microsoft.FeatureManagement.Mvc;
 
 namespace AzureAppServiceTest.Controllers
 {
@@ -21,37 +23,11 @@ namespace AzureAppServiceTest.Controllers
 
       private readonly IConfiguration Config;
 
-      IConfiguration m_AzureAppConfig;
-
-      bool m_HasAppConfig;
 
       public HomeController(IConfiguration config, ILogger<HomeController> logger)
       {
          Config = config;
          _logger = logger;
-
-         var appTag = Config.GetValue<string>("AppTag");
-
-         var labelFilter = appTag.Contains("Dev") ? "Dev" : "Prod";
-
-         //Azure host web app will read from Web App Configuration
-         var azureAppConfig = Config.GetConnectionString("AppConfig");
-         if (azureAppConfig != null)
-         {
-            m_AzureAppConfig = new ConfigurationBuilder().AddAzureAppConfiguration(x =>
-                                                                                   {
-                                                                                      x.Connect(azureAppConfig);
-
-                                                                                      //Filter on labels, key with label will override those without labels
-                                                                                      x.Select(KeyFilter.Any, LabelFilter.Null);
-                                                                                      x.Select(KeyFilter.Any, labelFilter);
-                                                                                   })
-                                                         .Build();
-            m_HasAppConfig = true;
-         }
-
-
-
       }
 
       //MVC default view template is the same as action method, Index
@@ -70,12 +46,10 @@ namespace AzureAppServiceTest.Controllers
          ViewData["ConnStr"] = Config.GetConnectionString("TestConn");
          ViewData["AppTag"] = Config.GetValue<string>("AppTag");
 
-         if (m_HasAppConfig)
-         {
-            ViewData["AzureAppConfig"] = m_AzureAppConfig.GetSection("CHYA:WebApp:Msg").Value;
-            ViewData["AzureAppConfigConnDev"] = m_AzureAppConfig.GetSection("CHYA:WebApp:Connection").Value;
-            ViewData["AzureAppConfigLabel"] = m_AzureAppConfig.GetSection("CHYA:WebApp:Label").Value;
-         }
+         ViewData["AzureAppConfig"] = Config.GetSection("CHYA:WebApp:Msg").Value;
+         ViewData["AzureAppConfigConnDev"] = Config.GetSection("CHYA:WebApp:Connection").Value;
+         ViewData["AzureAppConfigLabel"] = Config.GetSection("CHYA:WebApp:Label").Value;
+         
 
          return View();
       }
@@ -88,7 +62,6 @@ namespace AzureAppServiceTest.Controllers
 
       public string Add(int aa, int bb)
       {
-         
          return (aa + bb).ToString();
       }
 
