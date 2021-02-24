@@ -57,7 +57,7 @@ namespace AzureAppServiceTest.Controllers
          if (m_HasAppConfig)
          {
             ViewData["AzureAppConfig"] = m_AzureAppConfig.GetSection("CHYA:WebApp:Msg").Value;
-            ViewData["AzureAppConfigConnDev"] = m_AzureAppConfig.GetSection("CHYA:WebApp:Connection - Dev").Value;
+            ViewData["AzureAppConfigConnDev"] = m_AzureAppConfig.GetSection("CHYA:WebApp:Connection").Value;
          }
 
          return View();
