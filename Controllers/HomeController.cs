@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 
 namespace AzureAppServiceTest.Controllers
 {
@@ -33,14 +34,17 @@ namespace AzureAppServiceTest.Controllers
 
          var labelFilter = appTag.Contains("Dev") ? "Dev" : "Prod";
 
+         //Azure host web app will read from Web App Configuration
          var azureAppConfig = Config.GetConnectionString("AppConfig");
          if (azureAppConfig != null)
          {
             m_AzureAppConfig = new ConfigurationBuilder().AddAzureAppConfiguration(x =>
                                                                                    {
                                                                                       x.Connect(azureAppConfig);
-                                                                                      x.Select("*", labelFilter);
-                                                                                      x.Select("*", "\0");
+
+                                                                                      //Filter on labels, key with label will override those without labels
+                                                                                      x.Select(KeyFilter.Any, LabelFilter.Null);
+                                                                                      x.Select(KeyFilter.Any, labelFilter);
                                                                                    })
                                                          .Build();
             m_HasAppConfig = true;
