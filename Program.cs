@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using Azure.Identity;
 
 namespace AzureAppServiceTest
 {
@@ -34,6 +35,10 @@ namespace AzureAppServiceTest
                                                                                        y.Select(KeyFilter.Any, labelFilter);
 
                                                                                        y.UseFeatureFlags();
+
+                                                                                       y.ConfigureKeyVault(kv=> {
+                                                                                          kv.SetCredential(new AzureCliCredential());
+                                                                                       });
                                                                                     });
 
                                                       });
