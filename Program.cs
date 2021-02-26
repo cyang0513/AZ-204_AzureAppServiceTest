@@ -43,6 +43,6 @@ namespace AzureAppServiceTest
 
                                                       });
                  webBuilder.UseStartup<Startup>();
-              });s
+              });
    }
 }
