@@ -37,12 +37,12 @@ namespace AzureAppServiceTest
                                                                                        y.UseFeatureFlags();
 
                                                                                        y.ConfigureKeyVault(kv=> {
-                                                                                          kv.SetCredential(new AzureCliCredential());
+                                                                                          kv.SetCredential(new DefaultAzureCredential());
                                                                                        });
                                                                                     });
 
                                                       });
                  webBuilder.UseStartup<Startup>();
-              });
+              });s
    }
 }
