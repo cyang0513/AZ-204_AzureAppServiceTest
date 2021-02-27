@@ -36,6 +36,10 @@ namespace AzureAppServiceTest
 
                                                                                        y.UseFeatureFlags();
 
+                                                                                       //Setup service principle to access key vault
+                                                                                       Environment.SetEnvironmentVariable("AZURE_CLIENT_ID ", "971c306c-8ea5-4247-8a07-7732facc8d58");
+                                                                                       Environment.SetEnvironmentVariable("AZURE_CLIENT_SECRET", "UQF-z_kFJRr~lCAWrwHslg0f1Q75-4rvMw");
+                                                                                       Environment.SetEnvironmentVariable("AZURE_TENANT_ID", "4e6f57dc-a3d9-4a0c-818b-a7c1bb2b79f6");
                                                                                        y.ConfigureKeyVault(kv=> {
                                                                                           kv.SetCredential(new DefaultAzureCredential());
                                                                                        });
