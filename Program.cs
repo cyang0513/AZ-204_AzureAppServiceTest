@@ -34,6 +34,7 @@ namespace AzureAppServiceTest
                                                                                        y.Select(KeyFilter.Any, LabelFilter.Null);
                                                                                        y.Select(KeyFilter.Any, labelFilter);
 
+                                                                                       //Feature managemet
                                                                                        y.UseFeatureFlags();
 
                                                                                        //Setup service principle to access key vault
@@ -43,6 +44,13 @@ namespace AzureAppServiceTest
                                                                                        y.ConfigureKeyVault(kv=> {
                                                                                           kv.SetCredential(new DefaultAzureCredential());
                                                                                        });
+
+                                                                                       //Dynamic config
+                                                                                       y.ConfigureRefresh(rf=> {
+                                                                                          rf.Register("CHYA:WebApp:Dynamic:Signal", true);
+                                                                                          rf.SetCacheExpiration(new TimeSpan(0,30,0));
+                                                                                       });
+
                                                                                     });
 
                                                       });

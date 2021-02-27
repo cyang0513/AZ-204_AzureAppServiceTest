@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace AzureAppServiceTest.Controllers
 {
@@ -21,13 +22,16 @@ namespace AzureAppServiceTest.Controllers
    {
       private readonly ILogger<HomeController> _logger;
 
-      private readonly IConfiguration Config;
+      private readonly IConfiguration m_Config;
+
+      private readonly AppConfigDynamic m_Dynamic;
 
 
-      public HomeController(IConfiguration config, ILogger<HomeController> logger)
+      public HomeController(IConfiguration config, ILogger<HomeController> logger, IOptionsSnapshot<AppConfigDynamic> option)
       {
-         Config = config;
+         m_Config = config;
          _logger = logger;
+         m_Dynamic = option.Value;
       }
 
       //MVC default view template is the same as action method, Index
@@ -43,13 +47,16 @@ namespace AzureAppServiceTest.Controllers
          ViewData["Message"] = sb.ToString();
          ViewData["Time"] = DateTime.Now.ToLongTimeString();
 
-         ViewData["ConnStr"] = Config.GetConnectionString("TestConn");
-         ViewData["AppTag"] = Config.GetValue<string>("AppTag");
+         ViewData["ConnStr"] = m_Config.GetConnectionString("TestConn");
+         ViewData["AppTag"] = m_Config.GetValue<string>("AppTag");
 
-         ViewData["AzureAppConfig"] = Config.GetSection("CHYA:WebApp:Msg").Value;
-         ViewData["AzureAppConfigConnDev"] = Config.GetSection("CHYA:WebApp:Connection").Value;
-         ViewData["AzureAppConfigLabel"] = Config.GetSection("CHYA:WebApp:Label").Value;
-         
+         ViewData["AzureAppConfig"] = m_Config.GetSection("CHYA:WebApp:Msg").Value;
+         ViewData["AzureAppConfigConnDev"] = m_Config.GetSection("CHYA:WebApp:Connection").Value;
+         ViewData["AzureAppConfigLabel"] = m_Config.GetSection("CHYA:WebApp:Label").Value;
+
+
+         ViewData["AzureAppConfigDynamic"] = m_Dynamic.Msg;
+         ViewData["AzureAppConfigKvRef"] = m_Config.GetSection("kv-secret").Value;
 
          return View();
       }

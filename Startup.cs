@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.FeatureManagement;
+using AzureAppServiceTest.Models;
 
 namespace AzureAppServiceTest
 {
@@ -23,6 +24,10 @@ namespace AzureAppServiceTest
       // This method gets called by the runtime. Use this method to add services to the container.
       public void ConfigureServices(IServiceCollection services)
       {
+         //Options pattern, map CHYA:WebApp:Dynamic:* to AppConfigDynamic
+         services.Configure<AppConfigDynamic>(Configuration.GetSection("CHYA:WebApp:Dynamic"));
+         services.AddAzureAppConfiguration();
+
          services.AddControllersWithViews();
          services.AddFeatureManagement();
       }
@@ -36,6 +41,8 @@ namespace AzureAppServiceTest
          app.UseStaticFiles();
 
          app.UseRouting();
+
+         app.UseAzureAppConfiguration();
 
          app.UseAuthorization();
 
