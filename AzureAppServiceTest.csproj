@@ -3,10 +3,13 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <StartupObject>AzureAppServiceTest.Program</StartupObject>
+    <UserSecretsId>3f6c6597-3e55-4f4a-bd48-8ba98ba9b708</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/6687e916-1640-4d52-8c9b-9b6728ba394d/resourcegroups/CHYA_APP_SERVICE/providers/Microsoft.Insights/components/AzureAppServiceTest</ApplicationInsightsResourceId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.3.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.17.0" />
     <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="4.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="4.1.0" />

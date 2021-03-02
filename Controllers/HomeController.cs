@@ -2,19 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
-using Microsoft.FeatureManagement;
-using Microsoft.FeatureManagement.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.ApplicationInsights;
+using System.Diagnostics;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace AzureAppServiceTest.Controllers
 {
@@ -26,17 +21,20 @@ namespace AzureAppServiceTest.Controllers
 
       private readonly AppConfigDynamic m_Dynamic;
 
+      private readonly TelemetryClient m_Telemetry;
 
-      public HomeController(IConfiguration config, ILogger<HomeController> logger, IOptionsSnapshot<AppConfigDynamic> option)
+      public HomeController(IConfiguration config, ILogger<HomeController> logger, IOptionsSnapshot<AppConfigDynamic> option, TelemetryClient tele)
       {
          m_Config = config;
          _logger = logger;
          m_Dynamic = option.Value;
+         m_Telemetry = tele;
       }
 
       //MVC default view template is the same as action method, Index
       public IActionResult Index()
       {
+         m_Telemetry.TrackEvent("Home page visited");
          //Use ViewData to pass to View
          var sb = new StringBuilder();
          sb.AppendLine("CHYA Azure App Service Test");
@@ -57,18 +55,29 @@ namespace AzureAppServiceTest.Controllers
 
          ViewData["AzureAppConfigDynamic"] = m_Dynamic.Msg;
          ViewData["AzureAppConfigKvRef"] = m_Config.GetSection("kv-secret").Value;
-
+       
+         m_Telemetry.Flush();
          return View();
       }
 
       public IActionResult Privacy()
       {
+         m_Telemetry.TrackEvent("Privacy page visited");
          ViewData["PrivacyMessage"] = "This is a test privacy message of CHYA";
+         m_Telemetry.Flush();
+
+         _logger.LogTrace("This is a trace from ILogger");
+         _logger.LogInformation("This is an information from ILogger");
+
          return View();
       }
 
       public string Add(int aa, int bb)
       {
+         m_Telemetry.TrackEvent("Add visited");
+         m_Telemetry.TrackTrace($"aa: {aa} bb: {bb}");
+         m_Telemetry.GetMetric("AddResult").TrackValue(aa + bb);
+         m_Telemetry.Flush();
          return (aa + bb).ToString();
       }
 
